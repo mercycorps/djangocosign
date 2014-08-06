@@ -26,10 +26,13 @@ class CosignBackend(RemoteUserBackend):
 
         By default, returns the username unchanged.
         """
-        
-        user = User.objects.get(username__exact=username)
-        self.configure_user(user)
-        
+
+        try:
+            user = User.objects.get(username__exact=username)
+            self.configure_user(user)
+        except Exception as e:
+            pass
+
         return username
 
     def configure_user(self, user):
