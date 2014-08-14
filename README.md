@@ -11,4 +11,20 @@ The ldapauth.py is kept mostly for reference purposes. It is recommended to use 
 
 Both files provide LDAP based authentication RemoteUserBackend authentication mechanism to a Django Powered site.
 
+requires:
+* python-ldap (pip install python-ldap)
 
+Installation:
+* add 'djangocosign' to your INSTALLED_APPS
+    INSTALLED_APPS = (
+        ...,
+        'djangocosign',
+        ...,
+    )
+
+Specify Authentication Backend in your settings file:
+
+AUTHENTICATION_BACKENDS = (
+    'ldaplogin.cosign.CosignBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
