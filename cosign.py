@@ -96,6 +96,10 @@ class CosignBackend(RemoteUserBackend):
         userprofile.employee_number = ldap_info['employee_number']
 
         userprofile.save()
+
+        if new == True:
+            userprofile.countries.add(country)
+
         return True
 
     def get_ldap_country(self, dn):
