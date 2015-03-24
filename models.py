@@ -13,11 +13,12 @@ TITLE_CHOICES = (
     ('ms', 'Ms.'),
 )
 
+
 class Country(models.Model):
     name = models.CharField(unique=True, max_length=100, null=True, blank=True)
     iso_two_letters_code = models.CharField(unique=True, max_length=2, db_index=True)
-    created = models.DateTimeField(auto_now=False)
-    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now=False, blank=True, null=True)
+    updated = models.DateTimeField(auto_now=False, blank=True, null=True)
 
     class Meta:
         ordering = ['iso_two_letters_code', 'name',]
@@ -27,13 +28,21 @@ class Country(models.Model):
     def __unicode__(self):
         return self.name + " (%s)" % self.iso_two_letters_code
 
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps as appropriate'''
+        if kwargs.pop('new_entry', True):
+            self.created = datetime.datetime.utcnow().replace(tzinfo=utc)
+        else:
+            self.updated = datetime.datetime.utcnow().replace(tzinfo=utc)
+        return super(Country, self).save(*args, **kwargs)
+
 
 class Office(models.Model):
     long_name = models.CharField(max_length=200, db_index=True, null=True, blank=True)
     name = models.CharField(max_length=3, db_index=True)
     country = models.ForeignKey(Country, help_text="Select a country")
     created_by = models.ForeignKey(User, related_name='office_created_by')
-    created = models.DateTimeField(auto_now=False)
+    created = models.DateTimeField(auto_now=False, blank=True, null=True)
     updated = models.DateTimeField(auto_now=False, blank=True, null=True)
 
     class Meta:
@@ -53,16 +62,25 @@ class Office(models.Model):
             self.updated = datetime.datetime.utcnow().replace(tzinfo=utc)
         return super(Office, self).save(*args, **kwargs)
 
+
 class UserProfile(models.Model):
     title = models.CharField(blank=True, null=True, max_length=3, choices=TITLE_CHOICES)
-    name = models.CharField("Give Name", null=True, max_length = 100)
-    employee_number = models.IntegerField("Employee Number", null=True, max_length=6)
-    user = models.OneToOneField(User, unique=True, related_name = 'userprofile')
-    country = models.ForeignKey(Country, null=True)
-    countries = models.ManyToManyField(Country, related_name = 'countries')
+    name = models.CharField("Given Name", blank=True, null=True, max_length=100)
+    employee_number = models.IntegerField("Employee Number", blank=True, null=True, max_length=6)
+    user = models.OneToOneField(User, unique=True, related_name='userprofile')
+    country = models.ForeignKey(Country, blank=True, null=True)
+    countries = models.ManyToManyField(Country, related_name='countries', blank=True, null=True)
     modified_by = models.ForeignKey(User, related_name='userprofile_modified_by')
-    created = models.DateTimeField(auto_now=False)
-    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now=False, blank=True, null=True)
+    updated = models.DateTimeField(auto_now=False, blank=True, null=True)
 
     def __unicode__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps as appropriate'''
+        if kwargs.pop('new_entry', True):
+            self.created = datetime.datetime.utcnow().replace(tzinfo=utc)
+        else:
+            self.updated = datetime.datetime.utcnow().replace(tzinfo=utc)
+        return super(UserProfile, self).save(*args, **kwargs)
