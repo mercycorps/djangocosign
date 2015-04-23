@@ -92,6 +92,8 @@ class CosignBackend(RemoteUserBackend):
             defaults = create_params2)
 
         userprofile.country = country
+        #added countries for default access to users country
+        userprofile.countries = country
         userprofile.name = ldap_info['full_name']
         userprofile.employee_number = ldap_info['employee_number']
 
