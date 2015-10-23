@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.utils.timezone import utc
+from django.contrib import admin
 
 from django.contrib.auth.models import User, UserManager
 
@@ -88,3 +89,8 @@ class UserProfile(models.Model):
         else:
             self.updated = datetime.datetime.utcnow().replace(tzinfo=utc)
         return super(UserProfile, self).save(*args, **kwargs)
+
+
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('country','name','title')
+    display = 'UserProfile'
