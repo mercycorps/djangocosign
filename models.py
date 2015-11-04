@@ -70,7 +70,7 @@ class UserProfile(models.Model):
     employee_number = models.IntegerField("Employee Number", blank=True, null=True)
     user = models.OneToOneField(User, unique=True, related_name='userprofile')
     country = models.ForeignKey(Country, blank=True, null=True)
-    countries = models.ManyToManyField(Country, "Accessible Countires", related_name='countries', blank=True)
+    countries = models.ManyToManyField(Country, verbose_name="Accessible Countires", related_name='countries', blank=True)
     modified_by = models.ForeignKey(User, related_name='userprofile_modified_by')
     created = models.DateTimeField(auto_now=False, blank=True, null=True)
     updated = models.DateTimeField(auto_now=False, blank=True, null=True)
@@ -80,7 +80,7 @@ class UserProfile(models.Model):
 
     @property
     def countries_list(self):
-        return ', '.join([x.name for x in self.countries.all()])
+        return ', '.join([x.iso_two_letters_code for x in self.countries.all()])
 
     def save(self, *args, **kwargs):
         ''' On save, update timestamps as appropriate'''
