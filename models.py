@@ -50,6 +50,10 @@ class Country(models.Model):
         verbose_name = "Country"
         verbose_name_plural = "Countries"
 
+    @property
+    def offices(self):
+        return Office.objects.filter(country_id=self.pk)
+
     def __unicode__(self):
         return self.name + " (%s)" % self.iso_two_letters_code
 
