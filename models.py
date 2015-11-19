@@ -18,8 +18,8 @@ TITLE_CHOICES = (
 class Region(models.Model):
     code = models.CharField(unique=True, max_length=20, null=False, blank=False)
     name = models.CharField(unique=True, max_length=100, null=False, blank=False)
-    created_by = models.ForeignKey(User, blank=False, null=False)
-    updated_by = models.ForeignKey(User, blank=False, null=False)
+    created_by = models.ForeignKey(User, blank=False, null=False, related_name='region_created_by')
+    updated_by = models.ForeignKey(User, blank=False, null=False, related_name='region_updated_by')
     created = models.DateTimeField(auto_now=False, auto_now_add=True, editable=False)
     updated = models.DateTimeField(auto_now=True, auto_now_add=False, editable=False, blank=True, null=True)
 
