@@ -15,9 +15,29 @@ TITLE_CHOICES = (
 )
 
 
+class Region(CommonBaseAbstractModel):
+    code = models.CharField(unique=True, max_length=20, null=False, blank=False)
+    name = models.CharField(unique=True, max_length=100, null=False, blank=False)
+
+    @property
+    def countries(self):
+        return Country.objects.filter(region_id=self.pk)
+
+    def __unicode__(self):
+        return u'%s - %s' % (self.code, self.name)
+
+    def __str__(self):
+        return '%s - %s' % (self.code, self.name)
+
+    class Meta(object):
+        verbose_name = 'Region'
+        ordering = ['code']
+
+
 class Country(models.Model):
     name = models.CharField(unique=True, max_length=100, null=True, blank=True)
     iso_two_letters_code = models.CharField(unique=True, max_length=2, db_index=True)
+    region = models.ForeignKey(Region, related_name='countries', blank=True, null=True, on_delete=models.DO_NOTHING)
     created = models.DateTimeField(auto_now=False, blank=True, null=True)
     updated = models.DateTimeField(auto_now=False, blank=True, null=True)
 
@@ -40,7 +60,7 @@ class Country(models.Model):
 
 class Office(models.Model):
     long_name = models.CharField(max_length=200, db_index=True, null=True, blank=True)
-    name = models.CharField(max_length=3, db_index=True)
+    name = models.CharField(max_length=4, db_index=True)
     country = models.ForeignKey(Country, help_text="Select a country")
     created_by = models.ForeignKey(User, related_name='office_created_by')
     created = models.DateTimeField(auto_now=False, blank=True, null=True)
